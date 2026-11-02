@@ -1,0 +1,33 @@
+[project]
+name = "py2exe-documentation-tooling"
+version = "0.0.0"
+requires-python = "==3.14.*"
+dependencies = ["markdown", "pymdown-extensions", "pytest", "pytest-cov"]
+
+[tool.uv]
+package = false
+python-preference = "only-managed"
+exclude-newer = "3 days"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+cache_dir = ".cache/pytest"
+addopts = "--strict-config --strict-markers --cov --cov-report=term-missing"
+
+[tool.coverage.run]
+branch = true
+source = ["scripts"]
+patch = ["subprocess"]
+relative_files = true
+data_file = ".cache/coverage/.coverage"
+
+[tool.coverage.paths]
+scripts = ["scripts", "*/scripts"]
+
+[tool.coverage.report]
+fail_under = 100
+precision = 2
+include_namespace_packages = true
+exclude_lines = []
+partial_branches = []

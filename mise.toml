@@ -1,0 +1,37 @@
+[env]
+VIRTUAL_ENV = false
+
+[settings]
+quiet = true
+lockfile = true
+minimum_release_age = "3d"
+
+[tools]
+rumdl = "latest"
+uv = "latest"
+"pypi:zensical" = { version = "latest", uvx_args = "--python 3.14 --managed-python" }
+
+[tasks.lint-content]
+description = "Lint the documentation"
+run = "rumdl check --no-cache --no-exclude --respect-gitignore=false content"
+
+[tasks.test]
+description = "Test Python tooling with 100% line and branch coverage"
+run = 'uv run --locked --python 3.14 --managed-python python -m pytest --cov-config="{{config_root}}/pyproject.toml"'
+
+[tasks.build]
+description = "Test Python tooling and build the site"
+run = [
+    { task = "lint-content" },
+    { task = "test" },
+    "zensical build",
+]
+
+[tasks.serve-preview]
+description = "Build and serve the preview"
+depends = ["build"]
+run = "zensical serve"
+
+[tasks.publish]
+description = "Build and publish the committed site to GitHub Pages"
+run = "uv run --no-project --python 3.14 --managed-python python scripts/site_tasks.py publish"
